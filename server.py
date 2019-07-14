@@ -9,19 +9,13 @@ def index():
     return render_template("survey_summary.html", headers=headers, fields=fields, data=data)
 
 def getSummary():
-    fields = ["Filename", "A", "B", "C", "D", "E"]
-    headers = fields
+    fields = ["Filename", "A", "B", "C", "D", "E"] # column names for output
+    headers = fields # custom header names for given fieldname (no difference here)
 
+    # build data structures
     data = []
-
-    query = db.session.query(Survey, Task, Assignment, Response) \
-                      .join(Task, Survey.id==Task.survey_id) \
-                      .join(Assignment, Task.id==Assignment.task_id) \
-                      .join(Response, Assignment.id==Response.assignment_id) \
-                      .filter(Survey.id == 1)
-
-    results = query.all()
-    fileNames = ["file1.mp3", "file2.mp3", "file3.mp3", "file4.mp3"]
+    rowMap = dict()    
+    fileNames = ["file1.mp3", "file2.mp3", "file3.mp3", "file4.mp3"]    
 
     for fileName in fileNames:
         row = dict()
@@ -32,13 +26,18 @@ def getSummary():
         row["D"] = 0
         row["E"] = 0
         data.append(row)
+        rowMap[fileName] = row
 
-    # Easy Pointer to your data rows
-    rowMap = dict()
-    for i in range(0, len(fileNames)):
-        fileName = fileNames[i]
-        rowMap[fileName] = data[i]
+    # query
+    query = db.session.query(Survey, Task, Assignment, Response) \
+                      .join(Task, Survey.id==Task.survey_id) \
+                      .join(Assignment, Task.id==Assignment.task_id) \
+                      .join(Response, Assignment.id==Response.assignment_id) \
+                      .filter(Survey.id == 1)
 
+    results = query.all()
+
+    # summarise counts
     for (_, _, _, response) in results:
         rowMap[response.response_item][response.response_value] = rowMap[response.response_item][response.response_value] + 1
 
