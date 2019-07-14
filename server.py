@@ -6,11 +6,15 @@ from models import Survey, Task, Assignment, Response
 @app.route('/')
 def index():
     (headers, fields, data) = getSummary()
+    print(headers)
     return render_template("survey_summary.html", headers=headers, fields=fields, data=data)
 
 def getSummary():
     fields = ["Filename", "A", "B", "C", "D", "E"] # column names for output
-    headers = fields # custom header names for given fieldname (no difference here)
+    headers = dict() # custom header names for given fieldname (no difference here)
+    for field in fields:
+        headers[field] = field
+    print(headers)
 
     # build data structures
     data = []
