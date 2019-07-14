@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>mturk survey summary</title>
+</head>
+<body>
+    <table>
+        <tr>
+            {% for field in fields %}
+            <th>{{headers[field]}}</th>
+            {% endfor %}
+        </tr>
+        {% for row in data %}
+        <tr>
+            {% for field in fields %}
+            <td>
+                {{ row[field] | safe }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
